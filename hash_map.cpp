@@ -1,5 +1,6 @@
 #include "hash_map.h"
 #include <iostream>
+#include <map>
 
 
 using namespace Proc;
@@ -8,61 +9,67 @@ using namespace std;
 
 int main()
 {
-	hash_map<int, int> myHash;
-
-	myHash.insert(make_pair(4, 40));
-	myHash.insert(make_pair(6, 60));
-
-
-	auto x = myHash.find(4);
-	if (x != nullptr) {
-		cout << "4 maps to " << x->second << endl;
-	}
-	else {
-		cout << "failed to find 4" << endl;
-	}
-
-
-
-	myHash.erase(4);
-
-	auto x2 = myHash.find(4);
-	if (x2 != nullptr) {
-		cout << "4 maps to " << x2->second << endl;
-	}
-	else {
-		cout << "Failed to find 4" << endl;
-	}
-
-
-	myHash[4] = 35;
-	myHash[4] = 60;
-
-
-	auto x3 = myHash.find(4);
-	if (x3 != nullptr) {
-		cout << "4 maps to " << x3->second << endl;
-	}
-	else {
-		cout << "Failed to find 4" << endl;
-	}
-	// std::swap() test
-
-	hash_map<int, int> other(std::equal_to<>(), 11);
-	swap(other, myHash);
-
 	
+	hash_map<string, int> myHash{
+		{"one", 100},
+		{"two", 200} };
+
+	myHash.insert({
+		{"three", 300},
+		{"Four", 400} });
+
+	for (auto it = myHash.cbegin(); it != myHash.cend(); ++it)
+	{
+		cout << it->first << ", " << (*it).second << endl;
+	}
+
+	cout << "-------------" << endl;
 
 
-	// copy constructor, assign 
-	hash_map<int, int> myHash2(other);
-	hash_map<int, int> myHash3;
-	myHash3 = myHash2;
+	for (auto& p : myHash) {
+		cout << p.first << " maps to " << p.second << endl;
+	}
+	cout << "-------------" << endl;
 
-	// move constructor, assign
-	hash_map<int, int> myHash4(std::move(myHash3));
-	hash_map<int, int> myHash5;
-	myHash5 = std::move(myHash4);
+	for (auto&[key, value] : myHash)
+	{
+		cout << key << " maps to " << value << endl;
+	}
+
+	cout << "-------------" << endl;
+
+	map<string, int> myMap(cbegin(myHash), cend(myHash));
+	for (auto& p : myMap)
+	{
+		cout << p.first << " maps to " << p.second << endl;
+	}
+
+
+	cout << "-------------" << endl;
+
+
+	auto found = myHash.find("three");
+	if (found != end(myHash))
+	{
+		cout << "Found three value: " << found->second << endl;
+	}
+
+	cout << "-------------" << endl;
+
+	map<string, int> some{ {"one",1},{"two",2} };
+	hash_map<string, int> hmap(cbegin(some), cend(some));
+
+
+	hash_map<string, int> myHash2;
+	myHash.swap(myHash2);
+
+	hash_map<string, int> myHash3(std::move(myHash2));
+
+	cout << myHash3.size() << endl;
+	cout << myHash3.max_size() << endl;
+
+
+
 
 
 	return 0;
